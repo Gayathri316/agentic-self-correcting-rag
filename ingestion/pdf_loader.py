@@ -5,6 +5,7 @@ Loads PDF documents and converts them into a Document object.
 """
 
 import fitz  # PyMuPDF
+from pathlib import Path
 
 from ingestion.models import Document
 
@@ -26,13 +27,22 @@ class PDFLoader:
         for page in pdf:
             full_text += page.get_text()
 
+        metadata = pdf.metadata
+        page_count = pdf.page_count
+
         pdf.close()
 
         return Document(
             text=full_text,
             source=file_path,
-            file_name=file_path.split("\\")[-1],
+            file_name=Path(file_path).name,
             file_type="pdf",
-            page_count=len(pdf),
-            ocr_used=False
+            page_count=page_count,
+            ocr_used=False,
+            metadata={
+                "title": metadata.get("title"),
+                "author": metadata.get("author"),
+                "producer": metadata.get("producer"),
+                "creator": metadata.get("creator"),
+            },
         )
