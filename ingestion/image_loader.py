@@ -1,14 +1,14 @@
 """
 Image Loader Module
 -------------------
-Loads image files and extracts text using EasyOCR.
+Loads image files and extracts text using OCR.
 """
 
 from pathlib import Path
 
-import easyocr
-
 from ingestion.models import Document
+from ingestion.image_preprocessor import ImagePreprocessor
+from ocr.ocr_manager import OCRManager
 
 
 class ImageLoader:
@@ -17,15 +17,22 @@ class ImageLoader:
     """
 
     def __init__(self):
-        # Create OCR model once
-        self.reader = easyocr.Reader(['en'])
+
+        self.preprocessor = ImagePreprocessor()
+
+        self.ocr_manager = OCRManager()
 
     def load(self, file_path: str) -> Document:
 
-        result = self.reader.readtext(file_path)
+        # Step 1
+        processed_image = self.preprocessor.preprocess(file_path)
 
-        extracted_text = "\n".join([item[1] for item in result])
+        # Step 2
+        extracted_text, confidence, engine = (
+            self.ocr_manager.extract_text(processed_image)
+        )
 
+        # Step 3
         return Document(
             text=extracted_text,
             source=file_path,
@@ -33,5 +40,9 @@ class ImageLoader:
             file_type=Path(file_path).suffix.replace(".", ""),
             page_count=1,
             ocr_used=True,
-            metadata={}
+            metadata={
+                "ocr_engine": engine,
+                "ocr_confidence": confidence,
+                "processed_image": str(processed_image),
+            },
         )

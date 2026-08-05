@@ -12,4 +12,4 @@ print("Pages     :", document.page_count)
 print("Type      :", document.file_type)
 print("OCR Used  :", document.ocr_used)
 print("=" * 50)
-print(document.text[:1000])   # Print first 1000 characters
+print(document.text[:])   # Print first 1000 characters
