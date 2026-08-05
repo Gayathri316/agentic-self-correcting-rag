@@ -2,4 +2,12 @@ from agents.ocr_correction_agent import OCRCorrectionAgent
 
 agent = OCRCorrectionAgent()
 
-print("Agent Created Successfully")
+sample = """
+Employec Leavc Poliey
+
+Casual Leavc : 12
+"""
+
+corrected = agent.correct(sample, 0.35)
+
+print(corrected)

@@ -28,8 +28,8 @@ class LLMService:
 
         self.client = genai.Client(api_key=api_key)
 
-        self.model = "gemini-2.5-flash-lite"
-        self.model = os.getenv("GEMINI_MODEL")
+        self.model = "gemini-flash-latest"
+        self.model = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 
     def generate(self, prompt: str) -> str:
 
