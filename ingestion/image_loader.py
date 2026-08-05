@@ -1,14 +1,14 @@
 """
 Image Loader Module
 -------------------
-Loads image files and extracts text using OCR.
+Loads image files and extracts text using the best OCR engine.
 """
 
 from pathlib import Path
 
 from ingestion.models import Document
 from ingestion.image_preprocessor import ImagePreprocessor
-from ocr.ocr_manager import OCRManager
+from agents.ocr_selection_agent import OCRSelectionAgent
 
 
 class ImageLoader:
@@ -17,22 +17,26 @@ class ImageLoader:
     """
 
     def __init__(self):
-
+        # Initialize image preprocessor
         self.preprocessor = ImagePreprocessor()
 
-        self.ocr_manager = OCRManager()
+        # Initialize OCR Selection Agent
+        self.ocr_agent = OCRSelectionAgent()
 
     def load(self, file_path: str) -> Document:
+        """
+        Preprocess image and extract text using the best OCR engine.
+        """
 
-        # Step 1
+        # Step 1: Preprocess image
         processed_image = self.preprocessor.preprocess(file_path)
 
-        # Step 2
+        # Step 2: Let the OCR agent decide the best engine
         extracted_text, confidence, engine = (
-            self.ocr_manager.extract_text(processed_image)
+            self.ocr_agent.select_best_ocr(processed_image)
         )
 
-        # Step 3
+        # Step 3: Return Document
         return Document(
             text=extracted_text,
             source=file_path,

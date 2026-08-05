@@ -1,9 +1,9 @@
 import easyocr
 
-from ocr.base import OCREngine
+from ocr.base import BaseOCREngine
 
 
-class EasyOCREngine(OCREngine):
+class EasyOCREngine(BaseOCREngine):
 
     def __init__(self):
         self.reader = easyocr.Reader(["en"])
